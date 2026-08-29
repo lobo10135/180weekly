@@ -40,65 +40,41 @@ def get_sp500_tickers():
 
 @st.cache_data(ttl=86400)
 def get_eurostoxx50_tickers():
-    """Lädt die aktuellen Euro Stoxx 50 Ticker dynamisch von Wikipedia."""
-    url = "https://en.wikipedia.org/wiki/EURO_STOXX_50"
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,"
-            " like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        )
-    }
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    tables = pd.read_html(io.StringIO(response.text))
-
-    target_df = None
-    for table in tables:
-        if "Ticker" in table.columns or "Symbol" in table.columns or any("Ticker" in str(col) for col in table.columns):
-            target_df = table
-            break
-
-    if target_df is None:
-        target_df = tables[2] if len(tables) > 2 else tables[0]
-
-    ticker_col = None
-    for col in target_df.columns:
-        if "ticker" in str(col).lower() or "symbol" in str(col).lower() or "code" in str(col).lower():
-            ticker_col = col
-            break
-
-    if ticker_col is None:
-        ticker_col = target_df.columns[1] if len(target_df.columns) > 1 else target_df.columns[0]
-
-    tickers = target_df[ticker_col].dropna().astype(str).tolist()
-    tickers = [t.strip().replace(".", "-") for t in tickers if t.strip() != ""]
-    return tickers
+    """Gibt eine bereinigte Liste aktueller Euro Stoxx 50 Unternehmen mit korrekten Yahoo-Finance-Endungen zurück."""
+    return [
+        "ADS.DE", "AD.AS", "AI.PA", "AIR.PA", "ALV.DE", "AMS.MC", "ASML.AS",
+        "CS.PA", "BBVA.MC", "SAN.MC", "BAS.DE", "BAYN.DE", "BMW.DE", "BNP.PA",
+        "CRG.IR", "BN.PA", "DTG.DE", "DB1.DE", "DTE.DE", "ENEL.MI", "ENI.MI",
+        "EL.PA", "FLTR.IE", "IBE.MC", "ITX.MC", "IFX.DE", "INGA.AS", "ISP.MI",
+        "OR.PA", "MC.PA", "MBG.DE", "MUV2.DE", "PRX.AS",
+        "RI.PA", "SAF.PA", "SAN.PA", "SAP.DE", "SU.PA", "SIE.DE", "STLAM.MI",
+        "TTE.PA", "DG.PA", "VOW3.DE", "UCG.MI", "UNA.AS", "VIE.PA"
+    ]
 
 
 @st.cache_data(ttl=86400)
 def get_dax_tickers():
-    """Gibt eine bereinigte, feste Liste aktueller DAX-Unternehmen zurück."""
+    """Gibt eine bereinigte, feste Liste aktueller DAX-Unternehmen mit korrekten Yahoo-Finance-Endungen zurück."""
     return [
-        "ADS.DE", "ALV.DE", "BAS.DE", "BAYN.DE", "BEI.DE", "BMW.DE", "BNR.DE",
-        "CBK.DE", "CON.DE", "DTG.DE", "DBK.DE", "DB1.DE", "DHL.DE", "DTE.DE",
-        "EOAN.DE", "FRE.DE", "HNR1.DE", "HEI.DE", "HEN3.DE", "HOT.DE", "IFX.DE",
-        "MBG.DE", "MRK.DE", "MTX.DE", "MUV2.DE", "P911.DE", "PAH3.DE", "QIA.DE",
-        "RHM.DE", "RWE.DE", "SAP.DE", "SRT3.DE", "SIE.DE", "SHL.DE", "SY1.DE",
-        "VOW3.DE", "VNA.DE", "ZAL.DE", "AIR.PA"
+        "ADS.DE", "AIR.PA", "ALV.DE", "BAS.DE", "BAYN.DE", "BEI.DE", "BMW.DE",
+        "BNR.DE", "CBK.DE", "CON.DE", "DTG.DE", "DBK.DE", "DB1.DE", "DHL.DE",
+        "DTE.DE", "EOAN.DE", "FRE.DE", "HNR1.DE", "HEI.DE", "HEN.DE", "IFX.DE",
+        "MBG.DE", "MRK.DE", "MTX.DE", "MUV2.DE", "PAH3.DE", "QGEN.DE",
+        "RHM.DE", "RWE.DE", "SAP.DE", "SIE.DE", "SHL.DE", "SY1.DE",
+        "VOW3.DE", "VNA.DE", "ZAL.DE"
     ]
 
 
 @st.cache_data(ttl=86400)
 def get_mdax_tickers():
-    """Gibt eine bereinigte, feste Liste echter MDAX-Unternehmen zurück."""
+    """Gibt eine bereinigte, feste Liste aktueller MDAX-Unternehmen mit korrekten Yahoo-Finance-Endungen zurück."""
     return [
-        "AIXA.DE", "AT1.DE", "ARL.DE", "BC8.DE", "BEI2.DE", "B3SA.DE", "AG1.DE",
-        "COP.DE", "DBG.DE", "DEQ.DE", "DHER.DE", "DWNI.DE", "ELM.DE", "ENR.DE",
-        "EVT.DE", "FRA.DE", "FNT.DE", "G24.DE", "GKS.DE", "HAG.DE",
-        "HNR.DE", "JUN3.DE", "KKR.DE", "KRN.DE", "LAN.DE", "LEG.DE",
-        "LXS.DE", "NEM.DE", "NDX1.DE", "OSR.DE", "PSM.DE", "RAT.DE", "RXC.DE",
-        "SANT.DE", "SAZ.DE", "SHA.DE", "SIX2.DE", "SMHN.DE", "TEG.DE", "TLX.DE",
-        "UN01.DE", "UTDI.DE", "WAC.DE", "WAF.DE", "JEN.DE", "KTN.DE"
+        "AIXA.DE", "ARL.DE", "AT1.DE", "BC8.DE", "BEI2.DE", "HOT.DE", "DBAN.DE",
+        "COP.DE", "DBG.DE", "DHER.DE", "DWNI.DE", "EVT.DE", "FRA.DE", "FNT.DE",
+        "G24.DE", "GKS.DE", "HAG.DE", "HNR.DE", "KKR.DE", "KRN.DE",
+        "LAN.DE", "LEG.DE", "LHA.DE", "NEM.DE", "NDX1.DE", "PSM.DE", "RAT.DE",
+        "RXC.DE", "SANT.DE", "SHA.DE", "TEG.DE", "UN01.DE", "WAC.DE", "WAF.DE",
+        "JEN.DE", "ETG.DE", "NXR.DE", "PSM.DE", "BYW.DE", "GBF.DE", "SZG.DE"
     ]
 
 
@@ -254,11 +230,9 @@ def generate_pdf(df, strategy_title):
 _, col_center, _ = st.columns([1, 2, 1])
 
 with col_center:
-    # 1. Großes Logo oben (falls vorhanden)
     if os.path.exists("bulle.jpg"):
         st.image("bulle.jpg", use_container_width=True)
 
-    # 2. Titel mit Glaskugel-Symbol und Beschreibung
     st.markdown("### 🔮 180's Weekly Scanner")
     st.markdown("""
     Dieser Streamlit-Scanner überprüft Aktien auf Basis von **Wochencharts** auf die **"180's"-Strategien**:
@@ -275,7 +249,6 @@ with col_center:
     """)
     st.write("---")
 
-    # Zeile 1: S&P 500 Buttons
     st.subheader("S&P 500 Scanner")
     col1, col2 = st.columns(2)
     with col1:
@@ -283,7 +256,6 @@ with col_center:
     with col2:
         run_sp_short = st.button("🔻 S&P500 Short (Weekly)", type="secondary", use_container_width=True)
 
-    # Zeile 2: Euro Stoxx 50 Buttons
     st.subheader("Euro Stoxx 50 Scanner")
     col_es1, col_es2 = st.columns(2)
     with col_es1:
@@ -291,7 +263,6 @@ with col_center:
     with col_es2:
         run_estoxx_short = st.button("🔻 Euro Stoxx 50 Short", type="secondary", use_container_width=True)
 
-    # Zeile 3: DAX Buttons
     st.subheader("DAX Scanner")
     col3, col4 = st.columns(2)
     with col3:
@@ -299,7 +270,6 @@ with col_center:
     with col4:
         run_dax_short = st.button("🔻 Dax Short (Weekly)", type="secondary", use_container_width=True)
 
-    # Zeile 4: MDAX Buttons
     st.subheader("MDAX Scanner")
     col5, col6 = st.columns(2)
     with col5:
@@ -307,7 +277,6 @@ with col_center:
     with col6:
         run_mdax_short = st.button("🔻 MDax Short (Weekly)", type="secondary", use_container_width=True)
 
-    # Ausführung Logik
     triggered_button = None
     strategy_mode = None
     universe_type = None
